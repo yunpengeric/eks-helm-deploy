@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
 # Login to Kubernetes Cluster.
-aws eks \
-    --region ${AWS_REGION} \
-    update-kubeconfig --name ${CLUSTER_NAME} \
-    --role-arn=${CLUSTER_ROLE_ARN}
+UPDATE_KUBECONFIG_COMMAND="aws eks --region ${AWS_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
+if [ -n "$CLUSTER_ROLE_ARN" ]; then
+    UPDATE_KUBECONFIG_COMMAND="${UPDATE_KUBECONFIG_COMMAND} --role-arn=${CLUSTER_ROLE_ARN}"
+fi
+${UPDATE_KUBECONFIG_COMMAND}
 
 # Helm Dependency Update
 helm dependency update ${DEPLOY_CHART_PATH:-helm/}
